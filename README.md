@@ -3,7 +3,7 @@
 Kubernetes manifests (desired state) for the platform project. Application code and image builds live in [hello-api](https://github.com/AhsanASid/hello-api).
 
 ## Layout
-- `hello-api/`: Deployment (2 replicas, readiness/liveness probes, resource limits) and ClusterIP Service
+- `hello-api/`: Argo Rollout (canary progressive delivery: 25%, 50%, 75% steps) and ClusterIP Service
 - `argocd/`: ArgoCD Application manifests
 - `monitoring/`: Helm values for lean Prometheus, Grafana, and Loki
 
