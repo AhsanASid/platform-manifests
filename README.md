@@ -6,10 +6,11 @@ Kubernetes manifests (desired state) for the platform project. Application code 
 - `hello-api/`: Argo Rollout (canary progressive delivery: 25%, 50%, 75% steps) and ClusterIP Service
 - `argocd/`: ArgoCD Application manifests
 - `monitoring/`: Helm values for lean Prometheus, Grafana, and Loki
+- `velero/`: MinIO local S3 storage and Velero disaster recovery configuration
 
 ## How deployment works
 1. Pushing to `hello-api` triggers GitHub Actions, which builds and publishes `ghcr.io/ahsanasid/hello-api:sha-<commit>`
-2. The image tag in `hello-api/deployment.yaml` is updated to that commit
+2. The image tag in `hello-api/rollout.yaml` is updated to that commit
 3. The cluster is reconciled to match this repo
 
 ## GitOps & ArgoCD Status (Phase 3 Note)
@@ -21,9 +22,19 @@ A lean, local-first observability stack is deployed in the `monitoring` namespac
 - **Grafana** (`grafana/grafana`): Declarative datasource provisioning for Prometheus and Loki, ephemeral storage.
 - **Loki & Promtail** (`grafana/loki-stack`): Monolithic single-binary log engine with local filesystem storage and Promtail container log scraper.
 
+## Progressive Delivery (Phase 4: Argo Rollouts)
+`hello-api` uses an **Argo Rollout** with a canary strategy:
+- Automated traffic shifting: 25% → 50% → 75% → 100% with configurable analysis and pause intervals.
+- Real-time visualization and control via the `kubectl-argo-rollouts` CLI plugin.
+
+## Disaster Recovery & Backups (Phase 5: Velero)
+Automated cluster backup and disaster recovery using **Velero**:
+- **Storage Target**: Local, zero-cost S3-compatible MinIO instance deployed in namespace `velero` (strictly avoiding billable AWS S3 requests).
+- **Verified Recovery**: Proven backup and full state restoration of the `default` namespace workloads (`hello-api` Rollout, Service, ReplicaSets).
+
 ## Local usage
 ```bash
 kind create cluster --name platform-dev
-kubectl apply -f hello-api/
-kubectl rollout status deployment/hello-api
+kubectl apply -f hello-api/rollout.yaml
+kubectl argo rollouts get rollout hello-api
 ```
