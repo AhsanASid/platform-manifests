@@ -1,6 +1,11 @@
-# platform-manifests
+# CloudOps Platform -- Kubernetes Delivery & Operations
 
-Kubernetes manifests (desired state) for the platform project. Application code and image builds live in [hello-api](https://github.com/AhsanASid/hello-api).
+Kubernetes desired-state manifests, progressive delivery (Argo Rollouts), observability stack (Prometheus, Grafana, Loki), and disaster recovery (Velero).
+
+Part of the **CloudOps Platform** project:
+- **[terraform-platform](https://github.com/AhsanASid/terraform-platform)**: Modular AWS Infrastructure as Code (VPC, IAM, SSM, plan-only EKS)
+- **[platform-manifests](https://github.com/AhsanASid/platform-manifests)**: Kubernetes desired state, Argo Rollouts, Observability, and Velero DR
+- **[hello-api](https://github.com/AhsanASid/hello-api)**: Python microservice & automated GitHub Actions CI pipeline
 
 ## Layout
 - `hello-api/`: Argo Rollout (canary progressive delivery: 25%, 50%, 75% steps) and ClusterIP Service
